@@ -1,3 +1,6 @@
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 public class DoublyLinkedList<T> implements List<T> {
 	private Node head, tail;
 	private int numberOfElements;
@@ -10,57 +13,139 @@ public class DoublyLinkedList<T> implements List<T> {
 	
 	@Override
 	public void addLast(T item) {
-		// TODO 
-			
+		//step 5b about the node
+		Node newNode = new Node(item);
+		if (isEmpty()) { //if list has nothing, this new node becomes both, head and taill
+			head = tail = newNode;
+		}
+		else {
+			tail.next = newNode; //point tail's next to new node and vice versa
+			newNode.previous = tail;
+			tail = newNode;// TODO 
+		}
+		numberOfElements++;
 	}
 
 	@Override
 	public void addFirst(T item) {
-		// TODO 
+		//step 4b: put a new node at the frontt
+		Node newNode = new Node(item);
+		if (isEmpty()) {
+			head = tail = newNode;
+		}
+		else
+		{
+			newNode.next = head; //linking new node to current head
+			head.previous = newNode;
+			head = newNode;
+		}
+		numberOfElements++;
+		
 		
 			
 	}
 
 	@Override
 	public T get(int position) {
-		// TODO 
-		return null; 
+		//step3: check index and loop it
+		if (position < 0 || position >= numberOfElements) {
+			return null; 
+		}
+		Node current = head;
+		for (int i = 0, i < position; i++){
+			current = current.next;
+		}
+		return current.data;
 	}
 
 	@Override
 	public void print() {
-		// TODO
+		//step1: start at head and fillow next	
+		Node current = head;
+		while (current !=null) {
+			System.out.print(current.data + " ");
+			current = current.next;
+		}
+		System.out.println();
+
 				
 	}
 
 	@Override
 	public void printBackwards() {
-		// TODO 
+		//step2: start at tail and go previous
+		Node current = tail;
+		while (current != null) {
+			System.out.print(current.data + " ");
+			current = current.previous;
+		}
+		System.out.println();
 			
 	}
 
 	@Override
 	public boolean remove(T item) {
-		// TODO 
+		Node current = head;
+        while (current != null) {
+            if (current.data.equals(item)) {
+                // If it's the head node
+                if (current == head) {
+                    head = head.next;
+                    if (head != null) head.previous = null;
+                    else tail = null; 
+                } 
+                // If it's the tail node
+                else if (current == tail) {
+                    tail = tail.previous;
+                    tail.next = null;
+                } 
+                // If it's somewhere in the middle
+                else {
+                    current.previous.next = current.next;
+                    current.next.previous = current.previous;
+                }
+                numberOfElements--;
+                return true;
+            }
+            current = current.next;
+        }
 	
 		return false;
 	}
 
 	@Override
 	public boolean isEmpty() {
-		// TODO 
+		//step6: simple check if size is zerp
+		return numberOfElements == 0;
 		return true; 
 	}
 
 	@Override
 	public int getLength() {
-		// TODO 
+		//step6: return the element counter
+		return numberOfElements;
 	
 	}
-	
-	/** 
-	 * Inner class representing a node in the linked list
-	 */
+
+	//step8: iterator here
+	public Iterator<T> iterator() {
+		return new DLLIterator();
+
+		private class DLLIterator implements Iterator<T> {
+			private Node current = head;
+
+			public boolean hasNext() {
+				return current != null;
+			}
+
+			public T next() {
+				if (!hasNext()) throw new NoSuchElementException();
+				T data = current.data;
+				current = current.next;
+				return data;
+			}
+		}
+
 
 	private class Node
 	{
